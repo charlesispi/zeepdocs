@@ -11,13 +11,13 @@ These changes are defined through **modifier segments**, which make up the full 
 
 Before you can write mod strings, you must understand what a stat is in the context of Zeep.
 
-**Stats** represent numerical values that define various aspects of gameplay. Every stat has a **stat name**, which is always lowercase and always includes a **slash** (e.g., `player/speed`, `weapon/damage`, `player/kills`).
+**Stats** represent numerical values that define various aspects of gameplay. Every stat has a **stat name**, which is always lowercase and always includes dots (e.g., `game.player.speed`, `game.weapon.damage`, `game.player.kills`).
 
 **There are two categories of stats:**
 
-- **Tracked stats** are read-only values that reflect gameplay activity or current conditions. Examples include `player/kills`, `player/distance_traveled`, or `player/in_elite_room`.  *These **cannot** be modified by a mod string but **can be read** in expressions.*
+- **Tracked stats** are read-only values that reflect gameplay activity or current conditions. Examples include `stat.player.kills`, `stat.player.distance_traveled`, or `stat.player.in_elite_room`.  *These **cannot** be modified by a mod string but **can be read** in expressions.*
 
-- **Gameplay stats** are values that represent permanent or semi-permanent attributes of the player, weapon, or world. Examples include `player/speed`, `player/max_health`, or `weapon/damage`.  *These **can** be modified by a mod string and **can be read** in expressions.*
+- **Gameplay stats** are values that represent permanent or semi-permanent attributes of the player, weapon, or world. Examples include `game.player.speed`, `game.player.max_health`, or `game.weapon.damage`.  *These **can** be modified by a mod string and **can be read** in expressions.*
 
 Some stats — both tracked and gameplay — are **boolean-style**, meaning they represent true or false using `1` and `0`, respectively. For example, a boolean gameplay stat might control whether a weapon is automatic, while a boolean tracked stat might indicate whether the player is in an elite room.
 
@@ -27,11 +27,11 @@ A full mod string is made up of one or more **modifier segments**, separated by 
 
 **Example:**
 ```
-player/speed*1.2,weapon/damage+10
+game.player.speed*1.2,game.weapon.damage+10
 ```
 This mod string has two **modifier segments**:
-- `player/speed*1.2`
-- `weapon/damage+10`
+- `game.player.speed*1.2`
+- `game.weapon.damage+10`
 
 > NOTE: Whitespace is irrelevant— it’s automatically stripped out and has no effect on parsing.
 
@@ -39,8 +39,8 @@ This mod string has two **modifier segments**:
 
 | Modifier Segment        | Description                        |
 |------------------------|------------------------------------|
-| `player/speed*1.2`     | Multiply `player/speed` by 1.2     |
-| `weapon/damage+10`    | Add 10 to `weapon/damage`         |
+| `game.player.speed*1.2`     | Multiply `game.player.speed` by 1.2     |
+| `game.weapon.damage+10`    | Add 10 to `game.weapon.damage`         |
 
 This mod string, when attached to an item in a players inventory, would increase the player's speed by 20% and add 10 to their weapon's damage.
 
@@ -93,7 +93,7 @@ The latter is explained in further detail in the next section.
 You can tell the game to calculate, on the fly, the value to be used in a modifier segment, instead of a predetermined value. 
 For example:
 ```
-player/max_health+5*2+30
+game.player.max_health+5*2+30
 ```
 - The first `+` is the operator.
 - The **modifier segment expression** is: `5*2+30`
@@ -101,7 +101,7 @@ player/max_health+5*2+30
   - First, `5 * 2 = 10`
   - Then, `10 + 30 = 40`
 
-**Result:** This modifier segment will add 40 to `player/max_health`.
+**Result:** This modifier segment will add 40 to `game.player.max_health`.
 
 These operations are supported:
 
@@ -139,10 +139,10 @@ These can be used with both tracked and gameplay stats. Using prefixes allows it
 ### Example Modifier Segment:
 
 ```
-weapon/damage*1+0.01*%delta:player/kills%
+game.weapon.damage*1+0.01*%delta:game.player.kills%
 ```
 
-**Result:** Multiply `weapon/damage` by 1.12 if the player has 12 kills since pickup.
+**Result:** Multiply `game.weapon.damage` by 1.12 if the player has 12 kills since pickup.
 
 ## 6. Example Mod Strings
 
@@ -151,7 +151,7 @@ Here's a few examples to really exemplify the utility and power of the mod strin
 ### Example 1: Make weapon automatic and boost damage per kill this level
 
 ```
-weapon/automatic=1,weapon/damage*1+0.01*%level:player/kills%
+game.weapon.automatic=1,game.weapon.damage*1+0.01*%level:stat.player.kills%
 ```
 
 **Result:** Sets the weapon to automatic and increases damage based on level kills.
@@ -159,7 +159,7 @@ weapon/automatic=1,weapon/damage*1+0.01*%level:player/kills%
 ### Example 2: Bonus damage per room entered before pickup
 
 ```
-weapon/damage*1+0.1*%initial:player/rooms_entered%
+stat.weapon.damage*1+0.1*%initial:stat.player.rooms_entered%
 ```
 
 **Result:** Multiplies weapon damage based on the number of rooms entered before picking up the item.
@@ -169,17 +169,17 @@ weapon/damage*1+0.1*%initial:player/rooms_entered%
 
 | **Stat Name**                  | **Description**            | **Stat Type**             |
 |-------------------------------|-----------------------------|---------------------------|
-| player/in_elite_room          | In elite room?              | Tracked, read only        |
-| player/kills                  | Enemies killed              | Tracked, read only        |
-| player/nearest_enemy_distance | Distance to nearest enemy   | Tracked, read only        |
-| player/max_health             | Max health                  | Gameplay, read and write  |
-| player/speed                  | Movement speed              | Gameplay, read and write  |
-| weapon/consecutive_hits       | Hits without missing        | Tracked, read only        |
-| weapon/automatic              | Automatic fire enabled      | Gameplay, read and write  |
-| weapon/bullet_bounces         | Bullet bounces allowed      | Gameplay, read and write  |
-| weapon/damage                 | Base weapon damage          | Gameplay, read and write  |
-| weapon/fire_cooldown          | Time between shots          | Gameplay, read and write  |
-| weapon/knockback              | Force on hit                | Gameplay, read and write  |
-| weapon/splash_damage          | Area damage                 | Gameplay, read and write  |
-| weapon/spread                 | Bullet spread angle         | Gameplay, read and write  |
+| stat.player.in_elite_room          | In elite room?              | Tracked, read only        |
+| stat.player.kills                  | Enemies killed              | Tracked, read only        |
+| stat.player.nearest_enemy_distance | Distance to nearest enemy   | Tracked, read only        |
+| game.player.max_health             | Max health                  | Gameplay, read and write  |
+| game.player.speed                  | Movement speed              | Gameplay, read and write  |
+| stat.weapon.consecutive_hits       | Hits without missing        | Tracked, read only        |
+| game.weapon.automatic              | Automatic fire enabled      | Gameplay, read and write  |
+| game.weapon.bullet_bounces         | Bullet bounces allowed      | Gameplay, read and write  |
+| game.weapon.damage                 | Base weapon damage          | Gameplay, read and write  |
+| game.weapon.fire_cooldown          | Time between shots          | Gameplay, read and write  |
+| game.weapon.knockback              | Force on hit                | Gameplay, read and write  |
+| game.weapon.splash_damage          | Area damage                 | Gameplay, read and write  |
+| game.weapon.spread                 | Bullet spread angle         | Gameplay, read and write  |
 
